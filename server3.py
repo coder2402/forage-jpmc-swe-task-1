@@ -260,7 +260,11 @@ class App(object):
         self._data_1 = order_book(read_csv(), self._book_1, 'ABC')
         self._data_2 = order_book(read_csv(), self._book_2, 'DEF')
         self._rt_start = datetime.now()
-        self._sim_start, _, _ = next(self._data_1)
+        # self._sim_start, _, _ = next(self._data_1)
+        try:
+            self._sim_start, _, _ = next(self._data_1)
+        except StopIteration:
+            print("No more items to iterate through in self._data_1.")
         self.read_10_first_lines()
 
     @property
@@ -282,9 +286,16 @@ class App(object):
                 yield t, bids, asks
 
     def read_10_first_lines(self):
-        for _ in iter(range(10)):
-            next(self._data_1)
-            next(self._data_2)
+        # for _ in iter(range(10)):
+            try:
+                for i in range(10):
+                    next(self._data_1)
+                    next(self._data_2)
+            # process data
+            except StopIteration:
+                print("No more data to read from _data_1 iterator.")
+            # next(self._data_1)
+            # next(self._data_2)
 
     @route('/query')
     def handle_query(self, x):
